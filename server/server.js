@@ -27,13 +27,18 @@ MODEL: Todo model
 */
 var Todo = mongoose.model('Todo', {
     text: {
-        type: String
+        type: String,
+        required: true, 
+        minlength: 1,
+        trim: true
     },
     completed: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     completedAt: {
-        type: Number
+        type: Number,
+        default: null
     }
 });
 
@@ -56,13 +61,30 @@ Create an instance of Todo model
 // });
 
 var myNewTodo = new Todo({
-    text: "Make a new todo",
-    completed: false,
-    completedAt: 122716
+    text: "Make a Todo with validation"
 });
 
 myNewTodo.save().then((resultDocument) => {
     console.log(resultDocument);
 }).catch((error) => {
     console.log(error);
+});
+
+var User = mongoose.model('User', {
+    email: {
+        type: String,
+        required: true,
+        trim: true, 
+        minlength: 1
+    }
+});
+
+var user = new User({
+    email: 'brandon@example.com'
+});
+
+user.save().then((results) => {
+    console.log("Saved user:", results);
+}).catch((error) => {
+    console.log('Unable to save user:', error);
 });
