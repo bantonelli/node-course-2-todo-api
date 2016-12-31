@@ -29,6 +29,19 @@ app.post('/todos', (req, res) => {
     });
 });
 
+app.get('/todos', (req, res) => {
+    // Get todos from database 
+    // return all todos in response 
+    Todo.find({}).then((dbResults) => {
+        res.status(200).send({
+            todos: dbResults,
+            requestSuccess: true
+        });
+    }).catch((dbError) => {
+        res.status(404).send(dbError);
+    });
+});
+
 // Access resource endpoint: GET /todos 
 
 app.listen(3000, () => {

@@ -4,11 +4,22 @@ const request = require("supertest");
 const {app} = require('../server');
 const {Todo} = require('../models/todo');
 
+var todos = [{
+    text: "First test todo"
+}, {
+    text: "Second test todo"
+}];
+
 beforeEach((done) => {
     // Clear all todos from DB before running test suite
     Todo.remove({}).then((results) => {
+        // CREATE NEW SEED DATA FOR TEST BLOCKS.
+        // insertMany adds array of records to db.
+        Todo.insertMany(todos);
+    }).then(() => {
         done();
-    }).catch((error) => {
+    })
+    .catch((error) => {
         done(error);
     });
 });
@@ -33,8 +44,8 @@ describe('POST /todos', () => {
                     return done(error);
                 }
                 Todo.find().then((todos) => {
-                    expect(todos.length).toBe(1);
-                    expect(todos[0].text).toBe(text);
+                    expect(todos.length).toBe(3);
+                    expect(todos[todos.length - 1].text).toBe(text);
                     done();
                 }).catch((error) => {
                     done(error);
@@ -53,13 +64,27 @@ describe('POST /todos', () => {
             }
             Todo.find({})
             .then((results) => {
-                expect(results.length).toBe(0);
+                expect(results.length).toBe(2);
                 done();
             })
             .catch((error) => {
                 done(error);
             })   
         });
+    });
+
+});
+
+describe('GET /todos', () => {
+
+    it('should return todos in the database', (done) => {
+        request(app)
+        .get('/todos')
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.todos.length).toBe(2);
+        })
+        .end(done);         
     });
 
 });
