@@ -56,7 +56,8 @@ app.get('/todos/:id', (req, res) => {
         if (dbResults) {
             res.status(200).send({todo: dbResults});
         } else {
-            res.status(404).send();
+            res.status(404).send()            
+            // res.status(404).send({error: "Todo not found"});
         }
     }).catch((error) => {
         res.status(400).send();
