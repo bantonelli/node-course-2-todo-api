@@ -1,6 +1,7 @@
 // Lib imports 
 var express = require("express");
 var bodyParser = require("body-parser");
+var { ObjectID } = require("mongodb");
 
 // Local imports 
 var {mongoose} = require('./db/mongoose');
@@ -29,6 +30,7 @@ app.post('/todos', (req, res) => {
     });
 });
 
+// Access list resource endpoint: GET /todos
 app.get('/todos', (req, res) => {
     // Get todos from database 
     // return all todos in response 
@@ -42,7 +44,25 @@ app.get('/todos', (req, res) => {
     });
 });
 
-// Access resource endpoint: GET /todos 
+// Access single resource by id: GET /todos:id 
+app.get('/todos/:id', (req, res) => {    
+    // get id and validate
+    var id = req.params.id;
+    if(!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    } 
+    // query database
+    Todo.findById(id).then((dbResults) => {
+        if (dbResults) {
+            res.status(200).send({todo: dbResults});
+        } else {
+            res.status(404).send();
+        }
+    }).catch((error) => {
+        res.status(400).send();
+    });
+});
+
 
 app.listen(3000, () => {
     console.log(`Started on port ${PORT}`);
