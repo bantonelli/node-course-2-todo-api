@@ -72,8 +72,29 @@ app.delete('/todos/:id', (req, res) => {
         // If valid delete using findByIdAndRemove(); 
             // if not deleted send 404 
             // if deleted send 200 and document that was deleted. 
+    var id = req.params.id; 
+    if (!ObjectID.isValid(id)) {
+        console.log('ObjectID err');
+        return res.status(404).send();
+    } 
+    Todo.findByIdAndRemove(id).then((dbResults) => {
+        // console.log(dbResults);
+        if (dbResults) {
+            // console.log(dbResults);
+            res.status(200).send({
+                todo: dbResults
+            });
+        } else {
+            // console.log('No Dbresults');
+            res.status(404).send();
+        }
+    }).catch((err) => {
+        // console.log('Server err');
+        res.status(400).send();
+    });
 });
 
+// Start server 
 app.listen(port, () => {
     console.log(`Started on port ${port}`);
 });
