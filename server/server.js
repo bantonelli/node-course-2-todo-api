@@ -44,7 +44,7 @@ app.get('/todos', (req, res) => {
     });
 });
 
-// Access single resource by id: GET /todos:id 
+// Access single resource by id: GET /todos/:id 
 app.get('/todos/:id', (req, res) => {    
     // get id and validate
     var id = req.params.id;
@@ -64,6 +64,15 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
+// Delete single resource route DELETE /todos/:id
+app.delete('/todos/:id', (req, res) => {
+    // get the id 
+    // validate the id 
+        // if not valid send 404
+        // If valid delete using findByIdAndRemove(); 
+            // if not deleted send 404 
+            // if deleted send 200 and document that was deleted. 
+});
 
 app.listen(port, () => {
     console.log(`Started on port ${port}`);
