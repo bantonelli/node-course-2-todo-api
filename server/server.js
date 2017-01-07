@@ -9,7 +9,7 @@ var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
 // Constants
-const PORT = 3000;
+const port = process.env.PORT || 3000;
 
 var app = express();
 // Middleware config (pass functions to app.use())
@@ -66,7 +66,7 @@ app.get('/todos/:id', (req, res) => {
 
 
 app.listen(3000, () => {
-    console.log(`Started on port ${PORT}`);
+    console.log(`Started on port ${port}`);
 });
 
 module.exports = {app};

@@ -15,6 +15,6 @@ mongoose.Promise = global.Promise;
     - We don't have to manage the order of our db calls 
     - Mongoose will manage this for us.  
 */
-mongoose.connect('mongodb://localhost:27017/TodoApp');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/TodoApp');
 
 module.exports = {mongoose};
