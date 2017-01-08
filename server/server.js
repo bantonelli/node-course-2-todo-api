@@ -1,7 +1,8 @@
-// Lib imports 
-var express = require("express");
-var bodyParser = require("body-parser");
-var { ObjectID } = require("mongodb");
+// Lib imports
+const _ = require("lodash"); 
+const express = require("express");
+const bodyParser = require("body-parser");
+const { ObjectID } = require("mongodb");
 
 // Local imports 
 var {mongoose} = require('./db/mongoose');
@@ -93,6 +94,48 @@ app.delete('/todos/:id', (req, res) => {
         res.status(400).send();
     });
 });
+
+
+// Update resource route PATCH /todos/:id 
+app.patch('/todos/:id', (req, res) => {
+    var id = req.params.id;
+
+    // Want to pick off certain properties 
+    var todoUpdate = _.pick(req.body, ['text', 'completed']);
+
+    if (!ObjectID.isValid(id)) {
+        // console.log('ObjectID err');
+        return res.status(404).send();
+    } 
+
+    // Check if completed is a boolean AND check if its true
+        // Then create timestamp for completedAt 
+        // Set completedAt property to timestamp  
+    if (_.isBoolean(todoUpdate.completed) && todoUpdate.completed) {    
+        todoUpdate.completedAt = new Date().getTime();
+    } else {
+        todoUpdate.completed = false;
+        todoUpdate.completedAt = null;
+    }
+
+    Todo.findByIdAndUpdate(id, {
+        $set: todoUpdate  
+    }, {
+        new: true
+    }).then((dbResults) => {
+        if (!dbResults) {
+            return res.status(404).send();
+        } else {
+            return res.status(200).send({ todo: dbResults });
+        }            
+    }).catch((error) => {
+        return res.status(400).send();
+    });    
+
+});
+
+
+
 
 // Start server 
 app.listen(port, () => {
