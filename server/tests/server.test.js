@@ -126,3 +126,54 @@ describe('GET /todos/:id', () => {
     });
     
 });
+
+describe('DELETE /todos/:id', () => {
+    // Assert the object is no longer in persistance store  
+    it('should remove a todo and return it in response', (done) => {
+        // send off request 
+        // query db to make sure it is no longer in collection 
+
+        // delete second todo item 
+        var hexID = todos[1]._id.toHexString();
+
+        request(app)
+        .delete(`/todos/${hexID}`)
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.todo._id).toBe(hexID);
+        })
+        .end((err, response) => {
+            if (err) {
+                return done(err);
+            } else {
+                // query database using findById()
+                // expect(null).toNotExist();
+                Todo.findById(hexID).then((dbResults) => {
+                    expect(dbResults).toNotExist();
+                    return done();
+                }).catch((err) => {
+                    return done(err);
+                });                
+            }
+        });
+    });
+
+    // // Assert that 404 is sent if todo not found 
+    it('should return a 404 if todo not found', (done) => {
+        var invalidID = new ObjectID().toHexString();
+        request(app)
+        .delete(`/todos/${invalidID}`)
+        .expect(404)
+        .end(done);
+    });
+
+    // // Assert that 404 is sent if ObjectID is not valid.
+    it('should return 404 if ObjectID is invalid', (done) => {
+        var invalidID = "1234";
+        request(app)
+        .delete(`/todos/${invalidID}`)
+        .expect(404)
+        .end(done);
+    });
+
+});

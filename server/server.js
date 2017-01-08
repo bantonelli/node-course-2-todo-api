@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 // Resource creation endpoint: POST /todos
 app.post('/todos', (req, res) => {
     // Get content from body using body parser
-    console.log(req.body);
+    // console.log(req.body);
     var todo = new Todo({
         text: req.body.text
     });
@@ -74,7 +74,7 @@ app.delete('/todos/:id', (req, res) => {
             // if deleted send 200 and document that was deleted. 
     var id = req.params.id; 
     if (!ObjectID.isValid(id)) {
-        console.log('ObjectID err');
+        // console.log('ObjectID err');
         return res.status(404).send();
     } 
     Todo.findByIdAndRemove(id).then((dbResults) => {
