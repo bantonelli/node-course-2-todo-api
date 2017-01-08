@@ -10,7 +10,9 @@ var todos = [{
     text: "First test todo"
 }, {
     _id: new ObjectID(),
-    text: "Second test todo"
+    text: "Second test todo",
+    completed: true,
+    completedAt: 333
 }];
 
 beforeEach((done) => {
@@ -174,6 +176,63 @@ describe('DELETE /todos/:id', () => {
         .delete(`/todos/${invalidID}`)
         .expect(404)
         .end(done);
+    });
+
+});
+
+describe('PATCH /todos/:id', () => {
+
+    it('should update the todo', (done) => {
+        // grab id of first item 
+        var hexID = todos[0]._id.toHexString();
+    
+        // make patch request
+        // use .send() to send data (like with POST)
+            // set completed to true
+        request(app)
+        .patch(`/todos/${hexID}`)
+        .send({
+            text: "Patched Text",
+            completed: true
+        })
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.todo.text).toBe("Patched Text");
+            expect(res.body.todo.completed).toBe(true);
+            expect(res.body.todo.completedAt).toBeA('number');
+        })
+        .end(done);
+        // Assert 200
+        // Assert response body has a text property that is changed 
+        // Assert completed is true, and completedAt is a number
+
+    });
+
+    it('should clear completedAt when todo is not completed', (done) => {
+
+        // Grab ID of second todo item 
+        var hexID = todos[1]._id.toHexString();
+
+        request(app)
+        .patch(`/todos/${hexID}`)
+        .send({
+            text: "Patched Text 2",
+            completed: false
+        })
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.todo.text).toBe("Patched Text 2");
+            expect(res.body.todo.completed).toBe(false);
+            expect(res.body.completedAt).toNotExist();
+        })
+        .end(done);
+
+        // update text, set completed to false 
+        // Assert 200
+        // Assert text is changed 
+        // Assert completed === false 
+        // Assert completedAt is null.  
+
     });
 
 });
